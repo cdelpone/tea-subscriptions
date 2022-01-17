@@ -31,5 +31,22 @@ RSpec.describe 'Subscriptions API' do
         expect(json[:data][:attributes][:status]).to eq('cancelled')
       end
     end
+
+    context 'return all of a customers subscriptions' do
+      let!(:customer2) { create(:customer) }
+      let!(:cust1_sub) { create(:subscription, customer_id: customer_id) }
+      let!(:active_subs) { create_list(:subscription, 5, customer_id: customer2.id) }
+      let!(:cancelled_subs) { create_list(:subscription, 5, status: 'cancelled', customer_id: customer2.id) }
+      before { get '/api/v1/customers/subscriptions', params: { customer_id: customer2.id } }
+
+      it 'returns all subscriptions' do
+        expect(json).not_to be_empty
+        expect(json[:data].size).to eq(10)
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
   end
 end
