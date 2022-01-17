@@ -5,19 +5,25 @@ RSpec.describe Subscription, type: :model do
     it { should belong_to :customer }
   end
 
+  describe 'validations' do
+    it { should validate_presence_of :title }
+    it { should validate_presence_of :price }
+    it { should validate_numericality_of :price }
+    it { should validate_presence_of :status }
+    it { should validate_presence_of :frequency }
+  end
+
   describe 'enum' do
-    let(:status) { %w[active cancelled] }
-    it 'has the right index' do
-      status.each_with_index do |sub, index|
-        expect(Subscription.statuses[sub]).to eq(index)
-      end
+    it 'return statuses hash' do
+      result = {"active"=>0, "cancelled"=>1}
+
+      expect(Subscription.statuses).to eq(result)
     end
 
-    let(:frequency) { %w[weekly monthly annually] }
-    it 'has the right index' do
-      frequency.each_with_index do |sub, index|
-        expect(Subscription.frequencies[sub]).to eq(index)
-      end
+    it 'returns frequency hash' do
+      result = {"weekly"=>0, "monthly"=>1, "annually"=>2}
+
+      expect(Subscription.frequencies).to eq(result)
     end
   end
 end
